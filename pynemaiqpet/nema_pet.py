@@ -1092,7 +1092,7 @@ def NEMASubvols(input_vol,
         zstart = max(0, bbox[2].start - dz)
         zstop  = min(xdim, bbox[2].stop + dz + 1)
     
-        slices.append([slice(xstart,xstop,None), slice(ystart,ystop,None), slice(zstart,zstop,None)])
+        slices.append((slice(xstart,xstop,None), slice(ystart,ystop,None), slice(zstart,zstop,None)))
 
         nmaskvox.append((xstop-xstart)*(ystop-ystart)*(zstop-zstart))
 

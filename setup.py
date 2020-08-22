@@ -6,7 +6,7 @@ setuptools.setup(
     setup_requires=['setuptools_scm','setuptools_scm_git_archive'],
     author="Georg Schramm",
     author_email="georg.schramm@kuleuven.be",
-    description="Analysis of PET NEMA IQ phantom scans"
+    description="Analysis of PET NEMA IQ phantom scans",
     license='MIT',
     long_description_content_type="text/markdown",
     url="https://github.com/gschramm/pynemaiqpet",
@@ -21,8 +21,8 @@ setuptools.setup(
                       'nibabel>=3.0',
                       'matplotlib>=3.1',
                       'pydicom>=2.0',
-                      'scipyi>=2.14',
+                      'scipy>=1.4',
                       'pandas>=1.0',
-                      'lmfiti>=1.0'],
+                      'lmfit>=1.0'],
     include_package_data=True,
 )
