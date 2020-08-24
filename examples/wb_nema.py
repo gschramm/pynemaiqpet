@@ -28,41 +28,22 @@ if sm_fwhm_mm > 0:
   vol = gaussian_filter(vol, sigma = sm_fwhm_mm / (2.35*voxsize))
 
 #-------------------------------------------------------------------------------------------------
-# (1) do a completely unconstrained fit 
-# not a good idea since all sphere usually have the same signal (activity concentration)
-# and the fitted resolution and radius are highly correlated
-fitres1, sphere_results1 = nema.fit_WB_NEMA_sphere_profiles(vol, voxsize)
+# do a fit where we force all spheres to have the same signal (assuming that the activity
+# concentration in all sphere was the same
+# and we fix the radii of all spheres (using the values from the NEMA specs)
 
-print('unconstrained fit')
-print(sphere_results1)
-
-fig1a = nema.show_WB_NEMA_profiles(fitres1)
-
-#-------------------------------------------------------------------------------------------------
-# (2) do a completely unconstrained fit
-# remember that fitted resolution and radius are highly correlated
-fitres2, sphere_results2 = nema.fit_WB_NEMA_sphere_profiles(vol, voxsize, sameSignal = True)
-
-print('fit with same signal')
-print(sphere_results2)
-
-fig2a = nema.show_WB_NEMA_profiles(fitres2)
-
-#-------------------------------------------------------------------------------------------------
-# (3) do a fit where we force all spheres to have the same signal and we fix
-# the radii of all spheres (using the values from the NEMA specs)
-# another approach would be to use the fitted R values from (2)
-fitres3, sphere_results3 = nema.fit_WB_NEMA_sphere_profiles(vol, voxsize, sameSignal = True,
-                                                            Rfix = [18.5, 14.0, 11.0, 8.5, 6.5, 5.])
+# try also doing the fit without fixing the radii
+fitres, sphere_results = nema.fit_WB_NEMA_sphere_profiles(vol, voxsize, sameSignal = True,
+                                                          Rfix = [18.5, 14.0, 11.0, 8.5, 6.5, 5.])
 
 print('fit with same signal and fixed radii')
-print(sphere_results3)
+print(sphere_results)
 
-fig3a = nema.show_WB_NEMA_profiles(fitres3)
+fig = nema.show_WB_NEMA_profiles(fitres)
 
 # plot the max and a50 recoveries
 # the 2nd argument should be the true (expected) activity concentration in the spheres
-fig3b = nema.show_WB_NEMA_recoveries(sphere_results3, sphere_results3['signal'].values[0])
+fig = nema.show_WB_NEMA_recoveries(sphere_results, sphere_results['signal'].values[0])
 
 # show the volume 
 pv.ThreeAxisViewer(vol, voxsize=voxsize)
