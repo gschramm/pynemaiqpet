@@ -13,7 +13,7 @@ from scipy.signal   import argrelextrema, find_peaks_cwt
 
 from lmfit    import Model
 
-def find_background_roi(vol, voxsize, Rcenter = 82, edge_margin = 28.):
+def find_background_roi(vol, voxsize, Rcenter = 82, edge_margin = 28., showROI= False):
   """ find the 2D background ROI for a NEMA sphere phantom
 
   Parameters
@@ -30,6 +30,9 @@ def find_background_roi(vol, voxsize, Rcenter = 82, edge_margin = 28.):
 
   edge_margin : float (optional)
     margin (mm) to stay away from the boarder of the phantom - default 28.
+
+  showROI : bool (optional)
+    whether to show 2D background ROI in a figure - default False
 
   Returns
   -------
@@ -70,6 +73,14 @@ def find_background_roi(vol, voxsize, Rcenter = 82, edge_margin = 28.):
   tmp = np.zeros(vol.shape, dtype = np.int8)
   tmp[...,sphere_sl] = bg_mask
   bg_inds = np.where(tmp == 1)
+
+  if showROI:
+    fig, ax = py.subplots(figsize = (5,5))
+    ax.imshow(sphere_2d_img.T, cmap = py.cm.Greys, vmin = 0, vmax = np.percentile(sphere_2d_img,99.9))
+    ax.contour(bg_mask.T)
+    ax.set_title(f'background ROI slice {sphere_sl}')
+    fig.tight_layout()
+    fig.show()
 
   return bg_inds
 
@@ -648,7 +659,8 @@ def fit_WB_NEMA_sphere_profiles(vol,
                                 FWHMfix   = None,
                                 wm           = 'dist',
                                 nmax_spheres = 6,
-                                sameSignal   = False):
+                                sameSignal   = False,
+                                showBGROI    = False):
     """ Analyse the sphere profiles of a NEMA scan
 
     Parameters
@@ -674,11 +686,14 @@ def fit_WB_NEMA_sphere_profiles(vol,
     wm : str, optional
       the weighting method of the data (equal, dist, sqdist)
 
-    nmax_spheres: int (optional)
+    nmax_spheres: int, optional
       maximum number of spheres to consider (default 6)
 
     sameSignal : bool, optional
-       whether to forace all spheres to have the signal from the biggest sphere
+      whether to forace all spheres to have the signal from the biggest sphere
+
+    showBGROI : bool ,optional
+      whether to show the background ROI in a separate figure - default False 
 
     Returns
     -------
@@ -695,7 +710,7 @@ def fit_WB_NEMA_sphere_profiles(vol,
         vol      = gaussian_filter(vol, sigma = sigmas)
 
     # find the 2D background ROI
-    bg_inds = find_background_roi(vol, voxsizes)
+    bg_inds = find_background_roi(vol, voxsizes, showROI = showBGROI)
     bg_mean = vol[bg_inds].mean()
     bg_cov  = vol[bg_inds].std() / bg_mean
 

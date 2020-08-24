@@ -34,7 +34,8 @@ if sm_fwhm_mm > 0:
 
 # try also doing the fit without fixing the radii
 fitres, sphere_results = nema.fit_WB_NEMA_sphere_profiles(vol, voxsize, sameSignal = True,
-                                                          Rfix = [18.5, 14.0, 11.0, 8.5, 6.5, 5.])
+                                                          Rfix = [18.5, 14.0, 11.0, 8.5, 6.5, 5.],
+                                                          showBGROI = True)
 
 print('fit with same signal and fixed radii')
 print(sphere_results)
