@@ -762,7 +762,8 @@ def show_WB_NEMA_profiles(fitres):
   return fig
 
 #-------------------------------------------------------------------------------------------
-def show_WB_NEMA_recoveries(sphere_results, true_activity, earlcolor = 'lightgreen'):
+def show_WB_NEMA_recoveries(sphere_results, true_activity, 
+                            earlcolor = 'lightgreen', earlversion = 2):
 
   unit = 'mm'   
 
@@ -771,17 +772,28 @@ def show_WB_NEMA_recoveries(sphere_results, true_activity, earlcolor = 'lightgre
   Rs     = sphere_results['R'].values
 
   fig2, axes2 = py.subplots(1,2, figsize = (6,4.), sharex = True)
-  RCa50_min  = np.array([0.76, 0.72, 0.63, 0.57, 0.44, 0.27]) 
-  RCa50_max  = np.array([0.89, 0.85, 0.78, 0.73, 0.60, 0.43]) 
-  RCmax_min  = np.array([0.95, 0.91, 0.83, 0.73, 0.59, 0.34]) 
-  RCmax_max  = np.array([1.16, 1.13, 1.09, 1.01, 0.85, 0.57]) 
+
+  # for the EARL limits see
+  # http://earl.eanm.org/cms/website.php?id=/en/projects/fdg_pet_ct_accreditation/accreditation_specifications.htm
+
+  if earlversion == 1:
+    RCa50_min  = np.array([0.76, 0.72, 0.63, 0.57, 0.44, 0.27]) 
+    RCa50_max  = np.array([0.89, 0.85, 0.78, 0.73, 0.60, 0.43]) 
+    RCmax_min  = np.array([0.95, 0.91, 0.83, 0.73, 0.59, 0.34]) 
+    RCmax_max  = np.array([1.16, 1.13, 1.09, 1.01, 0.85, 0.57]) 
+  elif earlversion == 2:
+    RCa50_min  = np.array([0.85, 0.82, 0.80, 0.76, 0.63, 0.39]) 
+    RCa50_max  = np.array([1.00, 0.97, 0.99, 0.97, 0.86, 0.61]) 
+    RCmax_min  = np.array([1.05, 1.01, 1.01, 1.00, 0.85, 0.52]) 
+    RCmax_max  = np.array([1.29, 1.26, 1.32, 1.38, 1.22, 0.88]) 
 
   # add the EARL limits
   if earlcolor != None:
-      for i in range(len(Rs)): 
-          axes2[0].add_patch(patches.Rectangle((Rs[i] - 0.5, RCa50_min[i]), 1, 
-                             RCa50_max[i] - RCa50_min[i], 
-                             facecolor = earlcolor, edgecolor = 'None'))
+    for i in range(len(Rs)): 
+      axes2[0].add_patch(patches.Rectangle((Rs[i] - 0.5, RCa50_min[i]), 1, 
+                         RCa50_max[i] - RCa50_min[i], 
+                         facecolor = earlcolor, edgecolor = 'None'))
+      axes2[0].set_title(f'EARL version {earlversion}')
 
 
   axes2[0].plot(Rs, a50RCs, 'ko')
@@ -791,13 +803,14 @@ def show_WB_NEMA_recoveries(sphere_results, true_activity, earlcolor = 'lightgre
 
   # add the EARL limits
   if earlcolor != None:
-      for i in range(len(Rs)): 
-          axes2[1].add_patch(patches.Rectangle((Rs[i] - 0.5, RCmax_min[i]), 1, 
-                             RCmax_max[i] - RCmax_min[i], 
-                             facecolor = earlcolor, edgecolor = 'None'))
+    for i in range(len(Rs)): 
+      axes2[1].add_patch(patches.Rectangle((Rs[i] - 0.5, RCmax_min[i]), 1, 
+                         RCmax_max[i] - RCmax_min[i], 
+                         facecolor = earlcolor, edgecolor = 'None'))
+      axes2[1].set_title(f'EARL version {earlversion}')
 
   axes2[1].plot(Rs, maxRCs, 'ko')
-  axes2[1].set_ylim(min(0.29,0.95*maxRCs.min()), max(1.18,1.05*maxRCs.max()))
+  axes2[1].set_ylim(min(0.29,0.95*maxRCs.min()), max(1.4,1.05*maxRCs.max()))
   axes2[1].set_xlabel('R (' + unit + ')')
   axes2[1].set_ylabel('RC max')
 

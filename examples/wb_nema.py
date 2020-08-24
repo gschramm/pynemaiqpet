@@ -15,13 +15,13 @@ from scipy.ndimage import gaussian_filter
 
 # load example data set included in package
 # replace with your own data if needed (e.g. dcm_pattern = 'my/dcm_dir/*.dcm')
-dcm_pattern = os.path.join(os.path.dirname(pynemaiqpet.__file__),'data','pet_recon_1','*.dcm')
+dcm_pattern = os.path.join(os.path.dirname(pynemaiqpet.__file__),'data','pet_recon_2','*.dcm')
 dcm         = pmf.DicomVolume(dcm_pattern)
 vol         = dcm.get_data() 
 voxsize     = dcm.voxsize 
 
 # FWHM of Gaussian kernel to apply before analysis
-sm_fwhm_mm = 4.5
+sm_fwhm_mm = 5.
 
 # post smooth the image
 if sm_fwhm_mm > 0:
@@ -49,7 +49,9 @@ fig = nema.show_WB_NEMA_profiles(fitres)
 
 # plot the max and a50 recoveries
 # the 2nd argument should be the true (expected) activity concentration in the spheres
-fig = nema.show_WB_NEMA_recoveries(sphere_results, sphere_results['signal'].values[0])
+# and also show the limits given by EARL (vesion 2)
+fig = nema.show_WB_NEMA_recoveries(sphere_results, sphere_results['signal'].values[0], 
+                                   earlversion = 2)
 
 # show the volume 
 pv.ThreeAxisViewer(vol, voxsize=voxsize)
