@@ -9,7 +9,7 @@ import pymirc.fileio as pmf
 import pymirc.viewer as pv
 
 import pynemaiqpet
-import pynemaiqpet.nema_pet as nema
+import pynemaiqpet.nema_wb as nema
 
 from scipy.ndimage import gaussian_filter
 
@@ -38,6 +38,12 @@ fitres, sphere_results = nema.fit_WB_NEMA_sphere_profiles(vol, voxsize, sameSign
 
 print('fit with same signal and fixed radii')
 print(sphere_results)
+
+# you can save the results table to csv
+# sphere_results.to_csv('myresults.csv')
+
+#-------------------------------------------------------------------------------------------------
+# show the results
 
 fig = nema.show_WB_NEMA_profiles(fitres)
 
