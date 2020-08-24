@@ -1,1 +1,1 @@
-recursive-include pynemaiqpet/data
+recursive-include pynemaiqpet/data *
