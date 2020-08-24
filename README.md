@@ -1,1 +1,71 @@
 # pynemaiqpet
+
+python routines to analyze NEMA image quality phantom scans
+
+## Authors
+
+Georg Schramm
+
+## License 
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+## Installation
+
+We recommend to use the anaconda python distribution and to create a
+conda virtual environment for pynemaiqpet.
+
+The installation consists of three steps:
+1. Installation of anaconda (miniconda) python distribution
+2. Creation of the conda virtual environment with all dependencies
+3. Installation of the pynemaiqpet package using pip
+
+### Installation of anaconda (miniconda)
+
+Download and install Miniconda from <https://docs.conda.io/en/latest/miniconda.html>.
+
+Please use the ***Python 3.x*** installer and confirm that the installer
+should run ```conda init``` at the end of the installtion process.
+
+To test your miniconda installtion, open a new terminal and execute
+
+```conda list```
+
+which should list the installed basic python packages.
+
+### Creation of the virtual conda environment
+
+To create a virtual conda python=3.6 environment execute
+
+```conda create -n pynemaiqpet python=3.6 ipython ```
+
+To test the installation of the virual environment, execute
+```conda activate pynemaiqpet```
+
+### Installation of the pynemaiqpet package
+
+Activate the virual conda environment
+```conda activate pynemaiqpet```
+
+To install the pynemaiqpet package run (replace X.XX with the latest release
+version that can be found on https://github.com/gschramm/pynemaiqpet/releases)
+
+```pip install https://github.com/gschramm/pynemaiqpet/archive/vX.XX.zip```
+
+which will install the pynemaiqpet package inside the virtual
+conda environment.
+
+To test the installation run (inside python or ipython)
+
+```python
+import pynemaiqpet
+print(pynemaiqpet.__version__)
+print(pynemaiqpet.__file__) 
+```
+
+## Run demos
+
+To test whether your installation works, you can run
+the example wb_nema.py (located in the pynemaiqpet/examples subfolder). 
+
+This example uses a test data set, included in the package.
