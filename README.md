@@ -25,31 +25,42 @@ The installation consists of three steps:
 Download and install Miniconda from <https://docs.conda.io/en/latest/miniconda.html>.
 
 Please use the ***Python 3.x*** installer and confirm that the installer
-should run ```conda init``` at the end of the installtion process.
+should run 
+```
+conda init
+``` 
+at the end of the installtion process.
 
 To test your miniconda installtion, open a new terminal and execute
-
-```conda list```
+```
+conda list
+```
 
 which should list the installed basic python packages.
 
 ### Creation of the virtual conda environment
 
 To create a virtual conda python=3.8 environment execute
-
-```conda create -n pynemaiqpet python=3.8 ipython ```
+```
+conda create -n pynemaiqpet python=3.8 ipython
+```
 
 To test the installation of the virual environment, execute
-```conda activate pynemaiqpet```
+```
+conda activate pynemaiqpet
+```
 
 ### Installation of the pynemaiqpet package
 
 Activate the virual conda environment
-```conda activate pynemaiqpet```
+```
+conda activate pynemaiqpet
+```
 
 To install the pynemaiqpet package from pypi run:
-```pip install pynemaiqpet```
-
+```
+pip install pynemaiqpet
+```
 which will install the pynemaiqpet package inside the virtual
 conda environment.
 
