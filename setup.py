@@ -24,6 +24,5 @@ setuptools.setup(
                       'scipy>=1.4',
                       'pandas>=1.0',
                       'lmfit>=1.0'],
-    include_package_data=True,
     entry_points = {'console_scripts' : ['pynemaiqpet_wb_nema_iq=pynemaiqpet.command_line_tools:wb_nema_iq'],},
 )
