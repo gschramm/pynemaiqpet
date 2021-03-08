@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="pynemaiqpet",
-    version="0.2.0",
+    version="0.3.0",
     setup_requires=['setuptools_scm','setuptools_scm_git_archive'],
     author="Georg Schramm",
     author_email="georg.schramm@kuleuven.be",
