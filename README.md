@@ -65,7 +65,14 @@ print(pynemaiqpet.__file__)
 
 ## Run demos
 
-To test whether your installation works, you can run
-the example wb_nema.py (located in the pynemaiqpet/examples subfolder). 
+If the installation was successful, the command line tool **pynemaiqpet_wb_nema_iq**, which allows to automatically analyze WB NEMA IQ scans from the command line, should be installed.
 
-This example uses a test data set, included in the package.
+To list see all its command line options and the help page run
+```
+pynemaiqpet_wb_nema_iq -h
+```
+To analyze the provided demo dicom data "pet_recon_2", you e.g. run:
+```
+pynemaiqpet_wb_nema_iq pet_recon_2 --fwhm_mm 5 --output_dir pet_recon_2_results --show --verbose
+``` 
+which will read all files in the direcory "pet_recon_2", post-smooth with Gaussian with FWHM = 5mm, show the output and finally save the output into the directory "pet_recon_2_results".

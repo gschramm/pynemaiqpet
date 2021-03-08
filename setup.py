@@ -17,7 +17,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    install_requires=['pymirc @ https://github.com/gschramm/pymirc/archive/v0.19.zip',
+    install_requires=['pymirc @ https://github.com/gschramm/pymirc/archive/v0.22.zip',
                       'nibabel>=3.0',
                       'matplotlib>=3.1',
                       'pydicom>=2.0',
@@ -25,4 +25,5 @@ setuptools.setup(
                       'pandas>=1.0',
                       'lmfit>=1.0'],
     include_package_data=True,
+    entry_points = {'console_scripts' : ['pynemaiqpet_wb_nema_iq=pynemaiqpet.command_line_tools:wb_nema_iq'],},
 )
