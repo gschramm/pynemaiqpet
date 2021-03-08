@@ -10,7 +10,7 @@ def wb_nema_iq():
   parser.add_argument('--radii_mm', default = [None], help = 'The radii (mm) of the 6 spheres (seperated by blanks)). If not given this is set the values "18.5 14.0 11.0 8.5 6.5 5.0" are used', nargs = '+')
   parser.add_argument('--signal', default = None, help = 'Fixed signal in [Bq/ml] (or the units of the volume) used when fitting all spheres. If not provided, the fitted value from the biggest sphere is used for all spheres', type = float)
   parser.add_argument('--wall_mm', default = 1.5, help = 'Fixed glass wall thickness (mm). If not provided 1.5mm is used.', type = float)
-  parser.add_argument('--earl', default = 2, help = 'EARL version to use for limits in plots', type = int, choices = [0,1])
+  parser.add_argument('--earl', default = 2, help = 'EARL version to use for limits in plots', type = int, choices = [1,2])
   parser.add_argument('--true_act_conc', default = None, help = 'True activity concentration in the spheres in [Bq/ml] (or the units of the volume). If not given, it is obtained from the fitted signal of the biggest sphere.', type = float)
   parser.add_argument('--output_dir',  help = 'name of the output directory', default = None)
   parser.add_argument('--show', help = 'show the results', action = 'store_true')
