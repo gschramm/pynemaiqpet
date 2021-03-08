@@ -35,9 +35,9 @@ which should list the installed basic python packages.
 
 ### Creation of the virtual conda environment
 
-To create a virtual conda python=3.6 environment execute
+To create a virtual conda python=3.8 environment execute
 
-```conda create -n pynemaiqpet python=3.6 ipython ```
+```conda create -n pynemaiqpet python=3.8 ipython ```
 
 To test the installation of the virual environment, execute
 ```conda activate pynemaiqpet```
@@ -47,10 +47,8 @@ To test the installation of the virual environment, execute
 Activate the virual conda environment
 ```conda activate pynemaiqpet```
 
-To install the pynemaiqpet package run (replace X.XX with the latest release
-version that can be found on https://github.com/gschramm/pynemaiqpet/releases)
-
-```pip install https://github.com/gschramm/pynemaiqpet/archive/vX.XX.zip```
+To install the pynemaiqpet package from pypi run:
+```pip install pynemaiqpet```
 
 which will install the pynemaiqpet package inside the virtual
 conda environment.
