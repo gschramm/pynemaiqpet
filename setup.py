@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="pynemaiqpet",
-    version="0.3.0",
+    version="0.3.1",
     author="Georg Schramm",
     author_email="georg.schramm@kuleuven.be",
     description="Analysis of PET NEMA IQ phantom scans",
