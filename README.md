@@ -16,9 +16,12 @@ We recommend to use the anaconda python distribution and to create a
 conda virtual environment for pynemaiqpet.
 
 The installation consists of three steps:
-1. Installation of anaconda (miniconda) python distribution
-2. Creation of the conda virtual environment with all dependencies
+1. (optional) Installation of anaconda (miniconda) python distribution
+2. (optional) Creation of the conda virtual environment with all dependencies
 3. Installation of the pynemaiqpet package using pip
+
+Although optional, we highly recommend to create and use a dedicated virtual
+conda python environment (steps 1 and 2).
 
 ### Installation of anaconda (miniconda)
 
@@ -31,7 +34,7 @@ conda init
 ``` 
 at the end of the installtion process.
 
-To test your miniconda installtion, open a new terminal and execute
+To test your miniconda installation, open a new terminal and execute
 ```
 conda list
 ```
