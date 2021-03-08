@@ -3,14 +3,13 @@ import setuptools
 setuptools.setup(
     name="pynemaiqpet",
     version="0.3.0",
-    setup_requires=['setuptools_scm','setuptools_scm_git_archive'],
     author="Georg Schramm",
     author_email="georg.schramm@kuleuven.be",
     description="Analysis of PET NEMA IQ phantom scans",
     license='MIT',
     long_description_content_type="text/markdown",
     url="https://github.com/gschramm/pynemaiqpet",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=["data"]),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
