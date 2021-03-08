@@ -6,6 +6,7 @@ setuptools.setup(
     author="Georg Schramm",
     author_email="georg.schramm@kuleuven.be",
     description="Analysis of PET NEMA IQ phantom scans",
+    long_description="Analysis of PET NEMA IQ phantom scans",
     license='MIT',
     long_description_content_type="text/markdown",
     url="https://github.com/gschramm/pynemaiqpet",
