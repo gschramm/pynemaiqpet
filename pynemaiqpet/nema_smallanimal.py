@@ -7,7 +7,7 @@ import pymirc.metrics     as pymr
 from pymirc.image_operations import kul_aff, aff_transform
 
 from scipy.ndimage import label, labeled_comprehension, find_objects, gaussian_filter
-from scipy.ndimage import binary_erosion, median_filter
+from scipy.ndimage import binary_erosion, median_filter, binary_closing
 from scipy.ndimage.measurements import center_of_mass
 from scipy.ndimage.morphology import binary_fill_holes
 
@@ -101,7 +101,8 @@ def fit_nema_2008_cylinder_profiles(vol,
                                     fix_S      = True,
                                     fix_R      = False,
                                     fix_fwhm   = False,
-                                    nrods      = 4):
+                                    nrods      = 4,
+                                    phantom    = 'standard'):
   """ Fit the radial profiles of the rods in a nema 2008 small animal PET phantom
 
   Parameters
@@ -124,6 +125,9 @@ def fit_nema_2008_cylinder_profiles(vol,
   nrods: int, optional
     number of rods to fit
 
+  phantom : string
+    phantom version ('standard' or 'mini')
+
   Returns
   -------
   a list of lmfit fit results
@@ -136,7 +140,7 @@ def fit_nema_2008_cylinder_profiles(vol,
   In the summed image, all rods (disks) are segmented followed by a fit
   of the radial profile.
   """
-  roi_vol = nema_2008_small_animal_pet_rois(vol, voxsize)
+  roi_vol = nema_2008_small_animal_pet_rois(vol, voxsize, phantom = phantom)
   
   rod_bbox = find_objects(roi_vol==4)
   
@@ -214,7 +218,8 @@ def fit_nema_2008_cylinder_profiles(vol,
   return retval
 
 #----------------------------------------------------------------------  
-def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2):
+def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2,
+                                    phantom = 'standard'):
   """ generate a label volume indicating the ROIs needed in the analysis of the
       NEMA small animal PET IQ phantom
 
@@ -234,6 +239,9 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2
   rod_th : float, optional
     threshold to find the rod in the summed 2D image relative to the
     mean of the big uniform region
+
+  phantom : string
+    phantom version ('standard' or 'mini')
  
   Returns
   -------
@@ -281,7 +289,10 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2
   RHO      = np.sqrt(X0**2 + X1**2)
   
   uni_mask = np.zeros(vol.shape, dtype = np.uint)
-  uni_mask[RHO <= 11.25] = 1
+  if phantom == 'standard':
+    uni_mask[RHO <= 11.25] = 1
+  elif phantom == 'mini':
+    uni_mask[RHO <= 6.25] = 1
   uni_mask[:,:,:uni_roi_start_slice]   = 0
   uni_mask[:,:,(uni_roi_end_slice+1):] = 0
   
@@ -299,15 +310,19 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2
   
   # sum the insert slices and subtract them from the max to find the two cold inserts
   sum_insert_img = vol[:,:,insert_roi_start_slice:(insert_roi_end_slice+1)].mean(2)
-  
-  insert_label_img, nlab_insert = label(sum_insert_img <= rod_th*vol[uni_inds].mean())
+ 
+  if phantom == 'standard':
+    insert_label_img, nlab_insert = label(sum_insert_img <= rod_th*vol[uni_inds].mean())
+  elif phantom == 'mini':
+    insert_label_img, nlab_insert = label(binary_erosion(sum_insert_img <= 0.6*rod_th*vol[uni_inds].mean()))
+
   insert_labels = np.arange(1,nlab_insert+1)
   # sort the labels according to volume
   npix_insert   = labeled_comprehension(sum_insert_img, insert_label_img, insert_labels, len, int, 0)
   insert_sort_inds = npix_insert.argsort()[::-1]
   insert_labels    = insert_labels[insert_sort_inds] 
   npix_insert      = npix_insert[insert_sort_inds] 
-  
+
   for i_insert in [1,2]:
     tmp = insert_label_img.copy()
     tmp[insert_label_img != insert_labels[i_insert]] = 0
@@ -363,7 +378,7 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2
   return roi_vol
 
 #--------------------------------------------------------------------
-def nema_2008_small_animal_iq_phantom(voxsize, shape):
+def nema_2008_small_animal_iq_phantom(voxsize, shape, version = 'standard'):
   """ generate a digital version of the upper part of the NEMA small animal PET
       IQ phantom that can be used to align a NEMA scan
 
@@ -374,6 +389,9 @@ def nema_2008_small_animal_iq_phantom(voxsize, shape):
 
   shape: 3 element tuple of integers
     shape of the volume
+
+  version : string
+    phantom version ('standard' or 'mini')
  
   Returns
   -------
@@ -387,20 +405,31 @@ def nema_2008_small_animal_iq_phantom(voxsize, shape):
   RHO      = np.sqrt(X0**2 + X1**2)
     
   phantom = np.zeros(shape)
-  phantom[RHO <= 30./2] = 1
-  phantom[X2 < 0]       = 0
-  phantom[X2 > 33.]     = 0
-  
-  RHO1 = np.sqrt((X0 - 7.5)**2 + X1**2)
-  RHO2 = np.sqrt((X0 + 7.5)**2 + X1**2)
-  
-  phantom[np.logical_and(RHO1 <= 9.2/2, X2 > 15)] = 0
-  phantom[np.logical_and(RHO2 <= 9.2/2, X2 > 15)] = 0
+  if version == 'standard':
+    phantom[RHO <= 30./2] = 1
+    phantom[X2 < 0]       = 0
+    phantom[X2 > 33.]     = 0
+    
+    RHO1 = np.sqrt((X0 - 7.5)**2 + X1**2)
+    RHO2 = np.sqrt((X0 + 7.5)**2 + X1**2)
+    
+    phantom[np.logical_and(RHO1 <= 9.2/2, X2 > 15)] = 0
+    phantom[np.logical_and(RHO2 <= 9.2/2, X2 > 15)] = 0
+  elif version == 'mini':
+    phantom[RHO <= 20./2] = 1
+    phantom[X2 < 0]       = 0
+    phantom[X2 > 34.]     = 0
+    
+    RHO1 = np.sqrt((X0 - 6)**2 + X1**2)
+    RHO2 = np.sqrt((X0 + 6)**2 + X1**2)
+    
+    phantom[np.logical_and(RHO1 <= 7.2/2, X2 > 16)] = 0
+    phantom[np.logical_and(RHO2 <= 7.2/2, X2 > 16)] = 0
 
   return phantom
 
 #--------------------------------------------------------------------
-def align_nema_2008_small_animal_iq_phantom(vol, voxsize, ftol = 1e-2, xtol = 1e-2, maxiter = 10, maxfev = 500):
+def align_nema_2008_small_animal_iq_phantom(vol, voxsize, ftol = 1e-2, xtol = 1e-2, maxiter = 10, maxfev = 500, version = 'standard'):
   """ align a reconstruction of the NEMA small animal PET IQ phantom to its digital version
 
   Parameters
@@ -414,6 +443,9 @@ def align_nema_2008_small_animal_iq_phantom(vol, voxsize, ftol = 1e-2, xtol = 1e
   ftol, xtol, maxiter, maxfev : float / int
     parameter for the optimizer used to minimze the cost function
 
+  version : string
+    phantom version ('standard' or 'mini')
+
   Returns
   -------
     a 3D numpy array
@@ -423,7 +455,7 @@ def align_nema_2008_small_animal_iq_phantom(vol, voxsize, ftol = 1e-2, xtol = 1e
   This routine can be useful to make sure that the rods in the NEMA scan are
   parallel to the axial direction.
   """
-  phantom  = nema_2008_small_animal_iq_phantom(voxsize, vol.shape)
+  phantom  = nema_2008_small_animal_iq_phantom(voxsize, vol.shape, version = version)
   phantom *= vol[vol>0.5*vol.max()].mean()
 
   reg_params = np.zeros(6)
