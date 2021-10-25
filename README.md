@@ -55,9 +55,14 @@ conda activate pynemaiqpet
 
 ### Installation of the pynemaiqpet package
 
-Activate the virual conda environment
+Activate the virtual conda environment
 ```
 conda activate pynemaiqpet
+```
+
+Install all dependecies
+```
+conda install -c conda-forge pymirc>=0.26 lmfit>=1.0 pandas>=1.0
 ```
 
 To install the pynemaiqpet package from pypi run:
