@@ -34,13 +34,6 @@ conda init
 ``` 
 at the end of the installtion process.
 
-To test your miniconda installation, open a new terminal and execute
-```
-conda list
-```
-
-which should list the installed basic python packages.
-
 ### Creation of the virtual conda environment
 
 To create a virtual conda python=3.8 environment execute
@@ -60,17 +53,10 @@ Activate the virtual conda environment
 conda activate pynemaiqpet
 ```
 
-Install all dependecies
+Install pynemaiqpet package and all its dependecies
 ```
-conda install -c conda-forge pymirc>=0.26 lmfit>=1.0 pandas>=1.0
+conda install -c gschramm -c conda-forge pynemaiqpet
 ```
-
-To install the pynemaiqpet package from pypi run:
-```
-pip install pynemaiqpet
-```
-which will install the pynemaiqpet package inside the virtual
-conda environment.
 
 To test the installation run (inside python or ipython)
 
