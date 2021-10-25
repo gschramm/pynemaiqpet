@@ -13,7 +13,7 @@ parser.add_argument('--phantom', help = 'phantom version', choices = ['standard'
                     default = 'standard')
 args = parser.parse_args()
 
-# read the PET volume form dicom
+# read the PET volume from dicom
 dcm = pf.DicomVolume(args.dcm_dir)
 vol = dcm.get_data()
 
@@ -23,10 +23,10 @@ vol_aligned = nsa.align_nema_2008_small_animal_iq_phantom(vol, dcm.voxsize, vers
 # generate the ROI label volume
 roi_vol = nsa.nema_2008_small_animal_pet_rois(vol_aligned, dcm.voxsize, phantom = args.phantom)
 
-# generate the repotr
+# generate the report
 nsa.nema_2008_small_animal_iq_phantom_report(vol_aligned, roi_vol)
 
-# short the aligned volume and the ROI volume (cropped versions)
+# show the aligned volume and the ROI volume (cropped versions)
 th = 0.3*np.percentile(vol_aligned, 99.9)
 bbox = find_objects(vol_aligned > th)[0]
 vi = pv.ThreeAxisViewer([vol_aligned[bbox],vol_aligned[bbox]], [None,roi_vol[bbox]**0.1], 
