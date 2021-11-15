@@ -581,10 +581,33 @@ def nema_2008_small_animal_iq_phantom_report(vol, roi_vol):
   
   print("\nrod results")
   print("------------------------------")
+  print("mean          ...:", lp_mean)
   print("recovery coeff...:", lp_rc)
   print("%std          ...:", lp_perc_std, "\n")
   
   
   np.set_printoptions(precision=None)
 
+#--------------------------------------------------------------------
+def get_phantom_name(vol, voxsize):
+  """derive NEMA small animal phantom version from volume"""
+  zprof      = vol.sum(0).sum(0)
+  zprof_grad = np.gradient(zprof)
+  zprof_grad[np.abs(zprof_grad) < 0.1*np.abs(zprof_grad).max()] = 0
+  
+  rising_edges  = argrelextrema(zprof_grad, np.greater, order = 10)[0]
+  falling_edges = argrelextrema(zprof_grad, np.less, order = 10)[0]
 
+  if falling_edges.shape[0] < 2:
+    falling_edges = np.concatenate([falling_edges,[vol.shape[2]]])
+
+  center_sl = (rising_edges[1] + falling_edges[1]) // 2
+
+  area = (vol[:,:,center_sl] > 0.5*np.percentile(vol[:,:,center_sl],99)).sum()*voxsize[0]*voxsize[1]
+
+  if area > 450:
+    phantom_name = 'standard'
+  else:
+    phantom_name = 'mini'
+
+  return phantom_name
