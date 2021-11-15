@@ -266,11 +266,17 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2
   # calculate the summed z profile to place the ROIs
   zprof      = vol.sum(0).sum(0)
   zprof_grad = np.gradient(zprof)
-  zprof_grad[np.abs(zprof_grad) < 0.1*np.abs(zprof_grad).max()] = 0
+  zprof_grad[np.abs(zprof_grad) < 0.13*np.abs(zprof_grad).max()] = 0
   
   rising_edges  = argrelextrema(zprof_grad, np.greater, order = 10)[0]
   falling_edges = argrelextrema(zprof_grad, np.less, order = 10)[0]
-  
+ 
+  # if we only have 2 falling edges because the volume is cropped, we add the last slices as 
+  # falling edge
+
+  if falling_edges.shape[0] == 2:
+    falling_edges = np.concatenate([falling_edges,[vol.shape[2]]])
+
   # define and analyze the big uniform ROI
   uni_region_start_slice  = rising_edges[1]
   uni_region_end_slice    = falling_edges[1]
@@ -300,7 +306,6 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2
   roi_vol[uni_inds] = 1
   
   # define and analyze the two cold ROIs
-  
   insert_region_start_slice  = falling_edges[1]
   insert_region_end_slice    = falling_edges[2]
   insert_region_center_slice = 0.5*(insert_region_start_slice + insert_region_end_slice) 
@@ -311,10 +316,18 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2
   # sum the insert slices and subtract them from the max to find the two cold inserts
   sum_insert_img = vol[:,:,insert_roi_start_slice:(insert_roi_end_slice+1)].mean(2)
  
+  ref = np.percentile(sum_insert_img,99)
   if phantom == 'standard':
-    insert_label_img, nlab_insert = label(sum_insert_img <= rod_th*vol[uni_inds].mean())
+    insert_label_img, nlab_insert = label(sum_insert_img <= 0.5*ref)
   elif phantom == 'mini':
-    insert_label_img, nlab_insert = label(binary_erosion(sum_insert_img <= 0.6*rod_th*vol[uni_inds].mean()))
+    # reset pixels outside the phantom, since inserts sometimes leak into background
+    tmp_inds = RHO[:,:,0] > 9
+    sum_insert_img[tmp_inds] = ref
+    insert_label_img, nlab_insert = label(binary_erosion(sum_insert_img <= 0.5*ref))
+
+    # add backgroud low activity ROI to be compliant with standard phantom
+    insert_label_img[tmp_inds] = 3
+    nlab_insert += 1
 
   insert_labels = np.arange(1,nlab_insert+1)
   # sort the labels according to volume
@@ -413,8 +426,10 @@ def nema_2008_small_animal_iq_phantom(voxsize, shape, version = 'standard'):
     RHO1 = np.sqrt((X0 - 7.5)**2 + X1**2)
     RHO2 = np.sqrt((X0 + 7.5)**2 + X1**2)
     
-    phantom[np.logical_and(RHO1 <= 9.2/2, X2 > 15)] = 0
-    phantom[np.logical_and(RHO2 <= 9.2/2, X2 > 15)] = 0
+    #phantom[np.logical_and(RHO1 <= 9.2/2, X2 > 15)] = 0
+    #phantom[np.logical_and(RHO2 <= 9.2/2, X2 > 15)] = 0
+    phantom[np.logical_and(RHO1 <= 11/2, X2 > 15)] = 0
+    phantom[np.logical_and(RHO2 <= 11/2, X2 > 15)] = 0
   elif version == 'mini':
     phantom[RHO <= 20./2] = 1
     phantom[X2 < 0]       = 0
