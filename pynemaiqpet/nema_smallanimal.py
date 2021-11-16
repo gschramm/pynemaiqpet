@@ -218,7 +218,7 @@ def fit_nema_2008_cylinder_profiles(vol,
   return retval
 
 #----------------------------------------------------------------------  
-def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2,
+def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.15,
                                     phantom = 'standard'):
   """ generate a label volume indicating the ROIs needed in the analysis of the
       NEMA small animal PET IQ phantom
@@ -368,7 +368,7 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.2
   sum_img = vol[:,:,rod_roi_start_slice:(rod_roi_end_slice+1)].mean(2)
   
   # label the summed image
-  label_img, nlab = label(sum_img > 0.12*sum_img.max())
+  label_img, nlab = label(sum_img > rod_th*sum_img.max())
   labels = np.arange(1,nlab+1)
   # sort the labels according to volume
   npix   = labeled_comprehension(sum_img, label_img, labels, len, int, 0)
