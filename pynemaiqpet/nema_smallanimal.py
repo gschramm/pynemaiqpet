@@ -588,6 +588,18 @@ def nema_2008_small_animal_iq_phantom_report(vol, roi_vol):
   
   np.set_printoptions(precision=None)
 
+  res = {'uniform_ROI_mean':uni_mean,
+         'uniform_ROI_max':uni_max,
+         'uniform_ROI_min':uni_min,
+         'uniform_ROI_perc_std':uni_perc_std,
+         'spill_over_ratio':insert_ratio,
+         'spill_over_perc_std':insert_perc_std,
+         'rod_mean':lp_mean, 
+         'rod_recovery_coeff':lp_rc, 
+         'rod_perc_std':lp_perc_std}
+
+  return res
+
 #--------------------------------------------------------------------
 def get_phantom_name(vol, voxsize):
   """derive NEMA small animal phantom version from volume"""
