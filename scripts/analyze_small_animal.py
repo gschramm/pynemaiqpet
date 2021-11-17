@@ -78,12 +78,21 @@ for nifti_file in fnames:
   # show the summed rod planes
   bbox_uni = find_objects(vol_aligned >= 0.5*np.percentile(vol_aligned,99))
   bbox_rods = find_objects(roi_vol == 4)
-  fig, ax = plt.subplots(1,1, figsize = (5,5))
-  ax.imshow(vol_aligned[bbox_uni[0][0],bbox_uni[0][1],bbox_rods[0][2]].mean(2).T, 
-            cmap = plt.cm.Greys, interpolation='bilinear')
-  ax.contour((roi_vol[bbox_uni[0][0],bbox_uni[0][1],bbox_rods[0][2]].mean(2) > 0).T, levels = 1, 
-             cmap = 'spring')
-  ax.set_axis_off()
+  
+  rod_img = vol_aligned[bbox_uni[0][0],bbox_uni[0][1],bbox_rods[0][2]].mean(2).T
+  roi_img = roi_vol[bbox_uni[0][0],bbox_uni[0][1],bbox_rods[0][2]].mean(2).T
+  
+  fig, ax = plt.subplots(1,2, figsize = (10,5))
+  ax[0].imshow(rod_img, cmap = plt.cm.Greys, interpolation='bilinear', vmax = res['uniform_ROI_mean'])
+  ax[0].contour(roi_img > 0, levels = 1, cmap = 'spring')
+  ax[1].imshow(rod_img**0.1, cmap = plt.cm.Greys, interpolation='bilinear')
+  ax[1].contour(roi_img > 0, levels = 1, cmap = 'spring')
+  
+  ax[0].set_title('rod image')
+  ax[1].set_title('rod image^0.1 (compressed contrast)')
+  
+  for axx in ax.ravel():
+   axx.set_axis_off()
   fig.tight_layout()
   fig.show()
   fig.savefig(rel_path.parent / (rel_path.stem + '_rod_rois.png'))

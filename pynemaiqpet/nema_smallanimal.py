@@ -370,8 +370,9 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.1
   # label the summed image
   label_img, nlab = label(sum_img > rod_th*sum_img.max())
   labels = np.arange(1,nlab+1)
+
   # sort the labels according to volume
-  npix   = labeled_comprehension(sum_img, label_img, labels, len, int, 0)
+  npix      = labeled_comprehension(sum_img, label_img, labels, len, int, 0)
   sort_inds = npix.argsort()[::-1]
   labels    = labels[sort_inds] 
   npix      = npix[sort_inds] 
@@ -387,6 +388,33 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.1
       central_pixel = np.round(np.array(center_of_mass(rod_sum_img))).astype(np.int)
   
     roi_vol[central_pixel[0],central_pixel[1],rod_roi_start_slice:(rod_roi_end_slice+1)] = i + 4
+
+  #-------------------------------------------------------
+  # if we only have 4 labels (rods), we find the last (smallest) one based on symmetries
+  if nlab == 4:
+    roi_img = roi_vol[...,rod_roi_start_slice]
+
+    com = center_of_mass(roi_vol == 1)
+    x0 = (np.arange(sum_img.shape[0]) - com[0]) * voxsize[0]
+    x1 = (np.arange(sum_img.shape[1]) - com[1]) * voxsize[1]
+    X0,X1 = np.meshgrid(x0, x1, indexing = 'ij')
+    RHO = np.sqrt(X0**2 + X1**2)
+
+    PHI = np.arctan2(X1,X0)
+    rod_phis = np.array([PHI[roi_img == x][0] for x in np.arange(4,nlab+4)])
+    PHI      = ((PHI - rod_phis[3]) % (2*np.pi)) - np.pi
+    rod_phis = ((rod_phis - rod_phis[3]) % (2*np.pi)) - np.pi
+    
+    missing_phi = ((rod_phis[3] - rod_phis[2]) % (2*np.pi)) - np.pi
+    
+    mask = np.logical_and(np.abs(PHI - missing_phi) < 0.25, np.abs(RHO - 6.4) < 2)
+    
+    central_pixel = np.unravel_index(np.argmax(sum_img*mask), sum_img.shape)
+    roi_vol[central_pixel[0],central_pixel[1],rod_roi_start_slice:(rod_roi_end_slice+1)] = 5
+
+    nlab += 1
+  #-------------------------------------------------------
+
 
   return roi_vol
 
