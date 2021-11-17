@@ -410,7 +410,7 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.1
     mask = np.logical_and(np.abs(PHI - missing_phi) < 0.25, np.abs(RHO - 6.4) < 2)
     
     central_pixel = np.unravel_index(np.argmax(sum_img*mask), sum_img.shape)
-    roi_vol[central_pixel[0],central_pixel[1],rod_roi_start_slice:(rod_roi_end_slice+1)] = 5
+    roi_vol[central_pixel[0],central_pixel[1],rod_roi_start_slice:(rod_roi_end_slice+1)] = 8
 
     nlab += 1
   #-------------------------------------------------------
