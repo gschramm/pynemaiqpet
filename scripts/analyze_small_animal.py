@@ -1,5 +1,4 @@
 import pymirc.viewer as pv
-import pymirc.fileio as pf
 import matplotlib.pyplot as plt
 import numpy as np
 import nibabel as nib
@@ -12,15 +11,27 @@ from scipy.ndimage import find_objects, center_of_mass
 import argparse
 
 from pathlib import Path
-mpath  = Path.home() / 'Downloads/NEMA_Nifti_GS/'
-fnames = sorted(list(mpath.rglob('*Cropped*/*.nii')))
-
 #-----------------------------------------------------------------------------------------
+# input parameter
+
+# master directory
+mpath  = Path.home() / 'Downloads/NEMA_Nifti_GS/'
+# recursive search for nifti files to analyze
+fnames     = sorted(list(mpath.rglob('*Cropped*/*.nii')))
+# output directory for results
+output_dir = Path('results') 
+# verbose output
+verbose    = True
+#-----------------------------------------------------------------------------------------
+
+if not output_dir.exists():
+  output_dir.mkdir(parents = True, exist_ok = True)
 
 df = pd.DataFrame()
 
 for nifti_file in fnames:
-  print(nifti_file)
+  if verbose:
+    print(nifti_file)
 
   rel_path = nifti_file.relative_to(mpath)
 
@@ -38,7 +49,8 @@ for nifti_file in fnames:
     flipz = True
 
   phantom_name =  nsa.get_phantom_name(vol, voxsize)
-  print(phantom_name)
+  if verbose:
+    print(phantom_name)
 
   # align the PET volume to "standard" space (a digitial version of the phantom)
   vol_aligned = nsa.align_nema_2008_small_animal_iq_phantom(vol, voxsize, version = phantom_name)
@@ -64,7 +76,9 @@ for nifti_file in fnames:
   #---------------------------------------------------------------------------------------------------
   # plots
 
-  rel_path.parent.mkdir(parents=True, exist_ok=True)
+  odir = output_dir / rel_path.parent
+
+  odir.mkdir(parents=True, exist_ok=True)
 
   if flipz:
     vol_aligned = np.flip(vol_aligned,2)
@@ -72,7 +86,10 @@ for nifti_file in fnames:
   
   # show the aligned volume and the ROI volume
   vi = pv.ThreeAxisViewer([vol_aligned,vol_aligned], [None,roi_vol**0.1], voxsize = voxsize, ls = '')
-  vi.fig.savefig(rel_path.parent / (rel_path.stem + '_uniform_rois.png'))
+  fig_file = odir / (rel_path.stem + '_uniform_rois.png')
+  vi.fig.savefig(fig_file)
+  if verbose:
+    print(f'wrote {fig_file}')
   plt.close(vi.fig)
 
   # show the summed rod planes
@@ -92,11 +109,20 @@ for nifti_file in fnames:
   ax[1].set_title('rod image^0.1 (compressed contrast)')
   
   for axx in ax.ravel():
-   axx.set_axis_off()
+    axx.set_axis_off()
+
   fig.tight_layout()
   fig.show()
-  fig.savefig(rel_path.parent / (rel_path.stem + '_rod_rois.png'))
+  fig_file = odir / (rel_path.stem + '_rod_rois.png')
+  fig.savefig(fig_file)
+  if verbose:
+    print(f'wrote {fig_file}')
   plt.close(fig)
 
-df.to_csv('results.csv')
+#-------------------------------------
 
+# write all results to a single csv file
+csv_file = output_dir / 'results.csv'
+df.to_csv(csv_file)
+if verbose:
+  print(f'wrote {csv_file}')
