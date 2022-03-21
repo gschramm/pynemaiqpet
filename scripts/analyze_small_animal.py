@@ -22,6 +22,8 @@ fnames     = sorted(list(mpath.rglob('*Cropped*/*.nii')))
 output_dir = Path('results') 
 # verbose output
 verbose    = True
+# method for ROI to calculate recovery for hot rods (max or mean)
+lp_voxel   = 'mean'
 #-----------------------------------------------------------------------------------------
 
 if not output_dir.exists():
@@ -56,7 +58,7 @@ for nifti_file in fnames:
   vol_aligned = nsa.align_nema_2008_small_animal_iq_phantom(vol, voxsize, version = phantom_name)
   
   # generate the ROI label volume
-  roi_vol = nsa.nema_2008_small_animal_pet_rois(vol_aligned, voxsize, phantom = phantom_name)
+  roi_vol = nsa.nema_2008_small_animal_pet_rois(vol_aligned, voxsize, phantom = phantom_name, lp_voxel = lp_voxel)
   
   # generate the report
   res = nsa.nema_2008_small_animal_iq_phantom_report(vol_aligned, roi_vol)

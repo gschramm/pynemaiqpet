@@ -232,9 +232,11 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.1
     containing the voxel size
 
   lp_voxel: string, optional
-    method of how to compute the pixel used to draw the line profiles
-    in the rods. 'max' means the maximum voxels in the summed 2D image.
-    anything else means use the center of mass.
+    method of how to compute the ROIs around the line profiles
+    in the summed images of the hot rods.
+    'max' means the maximum voxels in the summed 2D image.
+    anything else means use all pixels that are within the rod radius
+    around the center of mass
  
   rod_th : float, optional
     threshold to find the rod in the summed 2D image relative to the
