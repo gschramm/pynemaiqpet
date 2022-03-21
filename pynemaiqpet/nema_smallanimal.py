@@ -379,15 +379,28 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.1
   
   # find the center for the line profiles
   for i, lab in enumerate(labels):
-    rod_sum_img = sum_img.copy()
-    rod_sum_img[label_img != lab] = 0
  
     if lp_voxel == 'max':
+      rod_sum_img = sum_img.copy()
+      rod_sum_img[label_img != lab] = 0
+
       central_pixel = np.unravel_index(rod_sum_img.argmax(),rod_sum_img.shape)
+      roi_vol[central_pixel[0],central_pixel[1],rod_roi_start_slice:(rod_roi_end_slice+1)] = i + 4
     else:
+      bbox = find_objects(label_img == lab)[0]
+      rod_sum_img = np.zeros(sum_img.shape)
+      rod_sum_img[bbox] = sum_img[bbox]
+
       central_pixel = np.round(np.array(center_of_mass(rod_sum_img))).astype(np.int)
-  
-    roi_vol[central_pixel[0],central_pixel[1],rod_roi_start_slice:(rod_roi_end_slice+1)] = i + 4
+
+      x0 = (np.arange(rod_sum_img.shape[0]) - central_pixel[0]) * voxsize[0]
+      x1 = (np.arange(rod_sum_img.shape[1]) - central_pixel[1]) * voxsize[1]
+      X0, X1 = np.meshgrid(x0, x1, indexing = 'ij')
+
+      dist_to_rod = np.sqrt(X0**2 + X1**2)
+
+      for r in range(rod_roi_start_slice,(rod_roi_end_slice+1)):
+        roi_vol[...,r][dist_to_rod <= 0.5*(5-i)] = i + 4
 
   #-------------------------------------------------------
   # if we only have 4 labels (rods), we find the last (smallest) one based on symmetries
@@ -410,7 +423,17 @@ def nema_2008_small_animal_pet_rois(vol, voxsize, lp_voxel = 'max', rod_th = 0.1
     mask = np.logical_and(np.abs(PHI - missing_phi) < 0.25, np.abs(RHO - 6.4) < 2)
     
     central_pixel = np.unravel_index(np.argmax(sum_img*mask), sum_img.shape)
-    roi_vol[central_pixel[0],central_pixel[1],rod_roi_start_slice:(rod_roi_end_slice+1)] = 8
+    if lp_voxel == 'max':
+      roi_vol[central_pixel[0],central_pixel[1],rod_roi_start_slice:(rod_roi_end_slice+1)] = 8
+    else:
+      x0 = (np.arange(rod_sum_img.shape[0]) - central_pixel[0]) * voxsize[0]
+      x1 = (np.arange(rod_sum_img.shape[1]) - central_pixel[1]) * voxsize[1]
+      X0, X1 = np.meshgrid(x0, x1, indexing = 'ij')
+
+      dist_to_rod = np.sqrt(X0**2 + X1**2)
+
+      for r in range(rod_roi_start_slice,(rod_roi_end_slice+1)):
+        roi_vol[...,r][dist_to_rod <= 0.5] = 8
 
     nlab += 1
   #-------------------------------------------------------
