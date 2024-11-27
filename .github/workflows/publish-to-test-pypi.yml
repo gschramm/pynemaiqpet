@@ -15,6 +15,10 @@ jobs:
     name: Build and publish Python distributions package to TestPyPI
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.12
