@@ -538,7 +538,7 @@ def NEMASubvols(input_vol,
       bgSignal = histo[1][find_peaks_cwt(histo[0], np.arange(nbins/6,nbins))[0]]
     thresh   = bgSignal + relTh*(vol.max() - bgSignal)
     
-    vol2               = np.zeros(vol.shape, dtype = np.int)
+    vol2               = np.zeros(vol.shape, dtype = int)
     vol2[vol > thresh] = 1
     
     vol3, nrois = label(vol2)
