@@ -1,4 +1,4 @@
-name: Publish Python distributions to TestPyPI
+name: Publish Python distributions to PyPI
 
 on:
   push:
@@ -33,8 +33,7 @@ jobs:
         run: |
           python -m build --sdist --wheel --outdir dist/ .
 
-      - name: Publish distribution package to Test PyPI
+      - name: Publish distribution package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
+          password: ${{ secrets.PYPI_API_TOKEN }}
