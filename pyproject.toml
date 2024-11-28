@@ -3,7 +3,7 @@ requires = ["setuptools >= 61.0", "wheel", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = { find = { include = ["pynemaiqpet*"], exclude = ["scripts*"] } }
+packages = { find = { include = ["pynemaiqpet*"], exclude = ["scripts*", "data*"] } }
 
 [tool.setuptools_scm]
 version_scheme = "post-release"
