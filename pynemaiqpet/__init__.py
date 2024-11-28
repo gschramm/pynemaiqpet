@@ -1,6 +1,6 @@
-from pkg_resources import get_distribution, DistributionNotFound
+from importlib.metadata import version, PackageNotFoundError
+
 try:
-    __version__ = get_distribution(__name__).version
-except DistributionNotFound:
-    # package is not installed
-    pass
+    __version__ = version("pynemaiqpet")
+except PackageNotFoundError:
+    __version__ = "unknown"
