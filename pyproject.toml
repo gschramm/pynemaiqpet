@@ -2,13 +2,6 @@
 requires = ["setuptools >= 61.0", "wheel", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ["pynemaiqpet"]
-
-[tool.setuptools_scm]
-version_scheme = "post-release"
-local_scheme = "dirty-tag"
-
 [project]
 name = "pynemaiqpet"
 dynamic = ["version"]
@@ -42,3 +35,12 @@ Repository = "https://github.com/gschramm/pynemaiqpet"
 
 [project.entry-points.console_scripts]
 pynemaiqpet_wb_nema_iq = "pynemaiqpet.command_line_tools:wb_nema_iq"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pynemaiqpet*"]
+exclude = ["pynemaiqpet.__pycache__"]
+
+[tool.setuptools_scm]
+version_scheme = "post-release"
+local_scheme = "dirty-tag"

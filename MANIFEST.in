@@ -1,2 +1,13 @@
-exclude data/*
-exclude scripts/*
+# Include necessary metadata files
+include LICENSE
+include README.md
+include pyproject.toml
+
+# Include only the package files
+graft pynemaiqpet
+
+# Exclude unwanted directories
+prune data
+prune scripts
+prune .git
+prine .github
