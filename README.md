@@ -2,13 +2,11 @@
 
 Python routines to analyze NEMA image quality phantom scans.
 
+![Banner](banner.png)
+
 ## Authors
 
 Georg Schramm
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Installation
 
