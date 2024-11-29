@@ -22,11 +22,9 @@ The installation consists of three steps:
 **Note:** _You can also install the package from pypi using pip install, but we recommend the
 installation from conda-forge as explained below._
 
-### Installation method 1: Anaconda/Miniforge and conda-forge
+### Installation method 1 (recommended): Anaconda/Miniforge and conda-forge
 
 You can either install Anaconda or use the community-driven Miniforge distribution. Find more information and downloads [here](https://github.com/conda-forge/miniforge).
-
-### Creation of the Virtual Conda Environment and Installation of pynemaiqpet
 
 To create a virtual conda environment containing the `pynemaiqpet` Python package and command-line tools, run:
 
@@ -77,3 +75,10 @@ pynemaiqpet_wb_nema_iq my_pet_recon --output_dir my_pet_recon_results_5mm_fwhm_g
 ```
 
 **Note:** This GitHub repository contains two example NEMA reconstructions in the [data subfolder](./data).
+
+## Batch-processing data sets
+
+If you need to analyze many reconstructions stored in different dicom folders,
+have a look at the `vision_earl.py` or `dmi_earl.py`  
+example python scripts in the [scripts subfolder](./scripts/) that show
+how to do that efficiently in python.
