@@ -40,3 +40,6 @@ jobs:
           python -m pip install dist/*.whl
           python -c "import pynemaiqpet; print('pynemaiqpet version:', pynemaiqpet.__version__)"
           pynemaiqpet_wb_nema_iq -h
+          pynemaiqpet_wb_nema_iq data/pet_recon_1 --verbose
+          pynemaiqpet_wb_nema_iq data/pet_recon_1 --fwhm_mm 3.5 --verbose
+          pynemaiqpet_wb_nema_iq data/pet_recon_2 --fwhm_mm 5.0 --verbose
